@@ -153,11 +153,19 @@ class Values_ {
   }
 
   removeAll () {
+    this.map = new Map();  // easiest way to clear the map
     this.props.deleteAllProperties();
+    // TODO this actually removes the keys that are stored in properties
+    this.cache.removeAll(this.getKeys());
   }
 
 }
 
-function Init () {
-  return Values_
+
+function create (guard='script') {
+  return new Values_(guard);
+}
+
+function import_ () {
+  return Values_;
 }

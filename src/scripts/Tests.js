@@ -1,7 +1,7 @@
 function ObjectStoreTests_() {
   const {describe, it, assert} = Import.UnitTesting;
   // map to Values_
-  const Properties = Init();
+  const Properties = import_();
 
   describe("initializaion via static methods", function () {
 
@@ -27,7 +27,7 @@ function ObjectStoreTests_() {
       const lib = Properties.userStore({dates:false});
       const expected = new Date();
       lib.set('date', expected);
-      lib.map.delete('date');
+      lib.map.delete('date');  // remove from map so we get what was stored
       const actual = lib.get('date');  // get directly from cache instead of default
       assert.objectEquals({actual: actual, expected:expected.toISOString()});
     });
