@@ -107,7 +107,11 @@ class Values_ {
     let value;
     // see if it's in the cache
     value = this.cache.get(key);
-    if (value !== null) return value;
+    if (value !== null) {
+      // put in map and return
+      this.map.set(key, value);
+      return value;
+    }
 
     // let's see if it's in the properties
     value = this.props.getProperty(key);
@@ -115,6 +119,9 @@ class Values_ {
     if (this[_config_].jsons) {
       value = Values_.utils.deserialize(value, this[_config_].dates);
     }
+    // put it in the cache and the store and return
+    this.map.set(key, value);
+    this.cache.set(key, value);
     return value;
   }
 
