@@ -1,11 +1,14 @@
-
 const _config_ = Symbol('config');
 function configure(config) {
   config = config || {jsons:true};
   config.jsons = config.jsons == undefined ? true : config.jsons;
   config.dates = config.dates == undefined ? false : config.dates;
+  config.manual = config.manual || false;
+  config.expiry = config.expiry || 600;  // 10 minutes by default
+  // can pass in "max" string
+  if (config.expiry == 'max') config.expiry = 21600;
   if (config.dates && !config.jsons) throw TypeError("jsons needs to be true for dates: true to be meaningful");
-  if (Object.keys(config).length > 2) throw TypeError(`Unknown property: ${Object.keys(config)}`);
+  if (Object.keys(config).length > 4) throw TypeError(`Unknown property: ${Object.keys(config)}`);
   return config;
 }
 
@@ -29,9 +32,6 @@ class Utils {
     return value;
   }
 
-  /**
-   * No longer used
-   */
   static dateReplacer(key, value) {
     if (value instanceof Date) {
       const timezoneOffsetInHours = -(this.getTimezoneOffset() / 60); //UTC minus local time
@@ -91,13 +91,36 @@ class Values_ {
     return Utils;
   }
 
+  serializePass (value) {
+    if (this[_config_].jsons)
+      return Values_.utils.serialize(value);
+    return value;
+  }
+
+  /**
+   * @param {String} key
+   */
   set (key, origValue) {
-    let value = origValue;
-    if (this[_config_].jsons) value = Values_.utils.serialize(origValue, this[_config_].dates);
-    else if (typeof value !== 'string') throw TypeError("non-string passed, turn on jsons?");
+    key = key.toString();  // cast to a string, otherwise might confuse things with integers
+    let value = this.serializePass(origValue);
+    if (typeof value !== 'string') throw TypeError("non-string passed, turn on jsons?");
     this.map.set(key, origValue);
-    this.cache.put(key, value);  // default value
-    this.props.setProperty(key, value);
+    if (!this[_config_].manual) {
+      this.cache.put(key, value);  // default value
+      this.props.setProperty(key, value);
+    }
+  }
+
+  /**
+   * Take what has been stored locally and update the property store
+   */
+  persist (propsOnly=true) {
+    const build = {};
+    for (const [key, value] of this.map) {
+      build[key] = this.serializePass(value);
+    }
+    if (!propsOnly) this.cache.putAll(build, this[_config_].expiry);
+    this.props.setProperties(build);
   }
 
   get (key) {
@@ -121,7 +144,7 @@ class Values_ {
     }
     // put it in the cache and the store and return
     this.map.set(key, value);
-    this.cache.set(key, value);
+    this.cache.put(key, value, this[_config_].expiry);
     return value;
   }
 
@@ -143,9 +166,9 @@ class Values_ {
     const copied = {};
     for (let key of Object.keys(properties)) {
       this.map.set(key, properties[key]);
-      this.cache.put(key, properties[key]);
+      this.cache.put(key, properties[key], this[_config_].expiry);
       if (this[_config_].jsons) {
-        copied[key] = Values_.utils.serialize(properties[key], this[_config_].dates);
+        copied[key] = this.serializePass(properties[key]);
       } else {
         copied[key] = properties[key];
       }
@@ -159,18 +182,16 @@ class Values_ {
     this.map.delete(key);
   }
 
-  removeAll () {
-    this.map = new Map();  // easiest way to clear the map
+  removeAll (keys=null) {
+    // cache service can only remove keys it is sent
+    if (keys) this.cache.removeAll(this.props.getKeys());
+    else this.cache.removeAll(keys);
     this.props.deleteAllProperties();
-    // TODO this actually removes the keys that are stored in properties
-    this.cache.removeAll(this.getKeys());
   }
-
 }
 
-
-function create (guard='script') {
-  return new Values_(guard);
+function create (guard='script', config) {
+  return new Values_(guard, config);
 }
 
 function import_ () {
