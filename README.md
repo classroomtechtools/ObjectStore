@@ -1,31 +1,43 @@
 # Object Store
 
-A once-and-for-all solution to having a key/value store in AppsScripts that stores stuff in locally in memory, and in with the `CacheService` and `PropertiesService`.
+A key/value store in AppsScripts that stores values and objects locally in memory, and writes to the `CacheService` and `PropertiesService` for reliable persistance.
 
-Offers dramatic improvements in fetching data that eventually needs to be persisted.
+It operates in two modes, auto or manual, the latter of which gives you control of when objects are persisted.
 
 ```js
-function myFunction () {
-    const userStore = ObjectStore('user'); 
-    const obj = {
-        hi: 'hi',
-        date: new Date()
-        arr: [1, 2, 3]
-    }
-    userStore.set('key', obj);
+// "global" stores, choose from 'script', 'document' or 'user'
+const autoStore = ObjectStore.create();  // 'script by default'
+const manualStore = ObjectStore.create('script', {manual: true});
 
-    // when you do this:
-    const value = userStore.get('key');
-    // if it's still in memory, will return that
-    // if not in memory, will consult the cache
-    // if not in the cache, will look for it in the property store
-    Logger.log(value);
+function autopersist () {   
+    // persisted now:
+    autoStore.set('key', {value: 'value'});  
+    ... // on next execution
+    const value = autoStore.get('key');
+}
+
+function manuallypersist () {
+    const dataArray = [ {idx: 1, d: 'd'}, ... ];
+    for (const item of dataArray) {
+        // keys must be strings (throws error if not):
+        const key = item.idx.toString();  
+        // does not persist in PropertiesStorage yet:
+        manualStore.set(key, item);  
+    }
+    // manually tell it to persist, more performant
+    manualStore.persist(); 
 }
 ```
 
 ## Get Started:
 
 - Library ID: `1vAC2ffoTeBPU6SmGTEBsQuf-XP_Pv-XaTUCNHscyGmiJRCNHZhevGEz6`
+
+## How it works
+
+A key/value store is just nomenclature where you have some sort of identifier (usually a string) that coorrelates to a value or object. JavaScript Objects can be a key/value store, and so are the `Properties` and `Cache` objects.
+
+In V8 JavaScript, the new datastructure `Map` is also a key/value store, and is used internally by this library to store objects natively. When it persists, it writes to the `PropertiesService` service.
 
 ## Why?
 
@@ -39,11 +51,9 @@ Keeping them locally in memory is fastest, and doesn't have to be stringified. H
 
 This libray does all three, so you don't have to worry about it.
 
-Bonus: It also handles dates correctly.
-
 ## Examples
 
-This is basic usage:
+This illustrates the basic methods and properties:
 
 ```js
 const store = ObjectStore();  // by default uses script
@@ -82,11 +92,55 @@ store.persist();
 
 ## Performance Note
 
-With only 10 items in the array, persisting it manually rather than in the each time through the loop is compared below:
+With only 10 items in the array, persisting it manually rather than in the each time through a loop is compared with the following code:
+
+```js
+function speedtest() {
+  const props = PropertiesService.getScriptProperties();
+  [null, false, true].forEach( manual => {
+    const max = 10;
+    const arr = Array.from(Array(max).keys());
+    const store = create('script', {manual});  // just save to local
+    store.removeAll(arr);   // resets it from previous call
+    const start = new Date().getTime();
+    
+    arr.map(item => (max - item).toString())
+      .forEach( (num, idx) => {
+        const item = {idx, a: num, date: new Date()};
+        if (manual == null) 
+            props.setProperty(num, JSON.stringify(item));
+        else
+            store.set(num, item, skipCache=true);
+      });
+    
+    if (manual) 
+      store.persist();  // now save
+
+    const end = new Date().getTime();
+    Logger.log(manual + ': ' + ((end - start) / 1000) + ' seconds');
+  });
+}
+```
+
+Result (`null` means `PropertiesServices` was called directly, `false` is in auto mode, and `true` is in manual mode:
 
 ```
-With manual=true: 0.3 seconds
-with manual=false: 3.1 seconds
+For max = 10:
+    null: 1.049 seconds
+    false: 1.041 seconds
+    true: 0.068 seconds
+
+For max = 100:
+    null: 9.269 seconds
+    false: 6.476 seconds
+    true: 0.072 seconds
+
+For max = 1000:
+    null: 68.854 seconds
+    false: 68.777 seconds
+    true: 0.139 seconds
 ```
 
-Very substantial savings.
+Note that `skipCache` was set to `true` in calls to `set` in order to present a more reliable metric of comparison.
+
+Conclusion: There could be substantial performance benefit to using this library in manual mode.

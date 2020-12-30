@@ -1,0 +1,16 @@
+{
+    "source": {
+        "include": ["src/scripts/Code.js", "src/modules/ObjectStore.js"]
+    },
+    "plugins": ["plugins/markdown"],
+    "templates": {
+        "referenceTitle": "Object Store for AppsScripts by Classroom Tech Tools"
+    },
+    "markdown": {
+        "excludeTags": ["author"]
+    },
+    "opts": {
+        "template": "../jsdoc-template",
+        "destination": "./docs"
+    }
+}
