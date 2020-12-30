@@ -1,5 +1,4 @@
 import {Enforce} from '@classroomtechtools/enforce_arguments';
-export {Enforce}
 
 const _config_ = Symbol('config');
 function configure(config) {
@@ -54,8 +53,10 @@ class Utils {
     return value;
   }
 
-  static serialize(value) {
+  static serialize(value, dates=true) {
     // return JSON.stringify(value, Utils.dateReplacer);
+    if (!dates && Utils.isString(value))
+      return value;
     return JSON.stringify(value);
   }
 
@@ -73,6 +74,13 @@ class Utils {
  * @property {Map} map - Internal storage, values are not stored as strings but as their native objects
  * @property {Properties} props - AppsScripts' PropertiesService instance
  * @property {Cache} cache - AppsScripts' CacheService instance
+ * @example
+ * const store = ObjectStore.create('script');
+ * // load it at execution start time
+ * store.load();
+ * store.set('key1', 'key1');
+ * store.set('key2', 'key2');
+ * store.persist();
  */
 class Store {
 
@@ -107,58 +115,72 @@ class Store {
 
   serializePass (value) {
     if (this[_config_].jsons)
-      return Store.utils.serialize(value);
+      return Store.utils.serialize(value, this[_config_].dates);
     return value;
+  }
+
+  /**
+   * Download from the PropertyStore and store locally
+   */
+  load () {
+    const props = this.props.getProperties();
+    for (const [key, value] of Object.entries(props)) {
+      this.map.set(key, this.serializePass(value));
+    }
   }
 
   /**
    * Stores the value at key. If in auto mode, also stores in cache and properties
    * @param {String} key - The identifier, must be a string
    * @param {String} value - The data to be stored at `key`.
-   * @param {Boolean} [skipCache=false] - Optionally skip the cache level; has no effect if in manual mode
+   * @param {Boolean} [skipCache=true] - If true (the default), don't interact with the cache service for this call
    * @throws {TypeError} Type error if `key` is not a string
    * @throws {TypeError} Type error if `value` is not a string, and it attempts to write to external stores
    */
-  set (key, value, skipCache=false) {
+  set (key, value, skipCache=true) {
     Enforce.positional(arguments, {key: '!string', value: 'any', 'skipCache': 'boolean'});
     this.map.set(key, value);
     if (!this[_config_].manual) {
       let serializedValue = this.serializePass(value);
-      if (typeof serializedValue !== 'string') throw TypeError("value must be string");
-      !skipCache && this.cache.put(key, value);  // default value
-      this.props.setProperty(key, value);
+      if (!Utils.isString(serializedValue)) throw TypeError("value must be string");
+      !skipCache && this.cache.put(key, serializedValue);
+      this.props.setProperty(key, serializedValue);
     }
   }
 
   /**
    * Take what has been stored in `.map` and update the property store
-   * @param {Boolean} [propsOnly=true] - Only update the property store and skip the cache
+   * @param {Boolean} [skipCache=true] - If true (the default), don't interact with the cache service for this call
    */
-  persist (propsOnly=true) {
+  persist (skipCache=true) {
     const build = {};
     for (const [key, value] of this.map) {
       build[key] = this.serializePass(value);
     }
-    if (!propsOnly) this.cache.putAll(build, this[_config_].expiry);
+    if (!skipCache) this.cache.putAll(build, this[_config_].expiry);
     this.props.setProperties(build);
   }
 
   /**
    * Retrieve the value stored at key, return `null` if not present
+   * @param {String} key - The key of which to return
+   * @param {Boolean} [skipCache=true] If true (the default), don't interact with the cache service for this call
    * @returns {any}
    */
-  get (key) {
+  get (key, skipCache=true) {
     Enforce.positional(arguments, {key: '!string'});
     // avoid any calls at all
     if (this.map.has(key)) return this.map.get(key);
 
     let value;
     // see if it's in the cache
-    value = this.cache.get(key);
-    if (value !== null) {
-      // put in map and return
-      this.map.set(key, value);
-      return value;
+    if (!skipCache) {
+      value = this.cache.get(key);
+      if (value !== null) {
+        // put in map and return
+        this.map.set(key, value);
+        return value;
+      }
     }
 
     // let's see if it's in the properties
@@ -197,9 +219,9 @@ class Store {
   /**
    * Calls `.setProperties` with properties after iterating through, serializing, and storing in local map
    * @param {Object} properties - object representing key/values
-   * @param {Boolean} [skipCache] - set to true to not place into cache
+   * @param {Boolean} [skipCache=true] - If true (the default), don't interact with the cache service for this call
    */
-  setProperties (properties, skipCache=false) {
+  setProperties (properties, skipCache=true) {
     Enforce.positional(arguments, {properties: 'object'});
     // make a copy of properties
     const copied = {};

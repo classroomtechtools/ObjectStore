@@ -32,6 +32,7 @@ function manuallypersist () {
 ## Get Started:
 
 - Library ID: `1vAC2ffoTeBPU6SmGTEBsQuf-XP_Pv-XaTUCNHscyGmiJRCNHZhevGEz6`
+- [Documentation](https://classroomtechtools.github.io/ObjectStore)
 
 ## How it works
 
@@ -122,13 +123,13 @@ function speedtest() {
 }
 ```
 
-Result (`null` means `PropertiesServices` was called directly, `false` is in auto mode, and `true` is in manual mode:
+Result:
 
 ```
 For max = 10:
-    null: 1.049 seconds
-    false: 1.041 seconds
-    true: 0.068 seconds
+    null: 1.049 seconds     # Calling PropertiesService directly 
+    false: 1.041 seconds    # In auto mode (persisting during loop)
+    true: 0.068 seconds     # In manual mode (persisting after loop)
 
 For max = 100:
     null: 9.269 seconds

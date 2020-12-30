@@ -73,7 +73,7 @@
 
     
 
-    <h3>Classes</h3><ul><li id="Store-nav"><a href="Store.html">Store</a><ul class='methods'><li data-type="method" id="Store-get-nav"><a href="Store.html#get">get</a></li><li data-type="method" id="Store-getAll-nav"><a href="Store.html#getAll">getAll</a></li><li data-type="method" id="Store-getKeys-nav"><a href="Store.html#getKeys">getKeys</a></li><li data-type="method" id="Store-persist-nav"><a href="Store.html#persist">persist</a></li><li data-type="method" id="Store-remove-nav"><a href="Store.html#remove">remove</a></li><li data-type="method" id="Store-removeAll-nav"><a href="Store.html#removeAll">removeAll</a></li><li data-type="method" id="Store-set-nav"><a href="Store.html#set">set</a></li><li data-type="method" id="Store-setProperties-nav"><a href="Store.html#setProperties">setProperties</a></li></ul></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#create">create</a></li><li><a href="global.html#import_">import_</a></li></ul>
+    <h3>Classes</h3><ul><li id="Store-nav"><a href="Store.html">Store</a><ul class='methods'><li data-type="method" id="Store-get-nav"><a href="Store.html#get">get</a></li><li data-type="method" id="Store-getAll-nav"><a href="Store.html#getAll">getAll</a></li><li data-type="method" id="Store-getKeys-nav"><a href="Store.html#getKeys">getKeys</a></li><li data-type="method" id="Store-load-nav"><a href="Store.html#load">load</a></li><li data-type="method" id="Store-persist-nav"><a href="Store.html#persist">persist</a></li><li data-type="method" id="Store-remove-nav"><a href="Store.html#remove">remove</a></li><li data-type="method" id="Store-removeAll-nav"><a href="Store.html#removeAll">removeAll</a></li><li data-type="method" id="Store-set-nav"><a href="Store.html#set">set</a></li><li data-type="method" id="Store-setProperties-nav"><a href="Store.html#setProperties">setProperties</a></li></ul></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#create">create</a></li></ul>
   </nav>
 
   <div id="main">
@@ -120,6 +120,7 @@ function manuallypersist () {
 <h2>Get Started:</h2>
 <ul>
 <li>Library ID: <code>1vAC2ffoTeBPU6SmGTEBsQuf-XP_Pv-XaTUCNHscyGmiJRCNHZhevGEz6</code></li>
+<li><a href="https://classroomtechtools.github.io/ObjectStore">Documentation</a></li>
 </ul>
 <h2>How it works</h2>
 <p>A key/value store is just nomenclature where you have some sort of identifier (usually a string) that coorrelates to a value or object. JavaScript Objects can be a key/value store, and so are the <code>Properties</code> and <code>Cache</code> objects.</p>
@@ -165,7 +166,8 @@ store.persist();
 <h2>Performance Note</h2>
 <p>With only 10 items in the array, persisting it manually rather than in the each time through a loop is compared with the following code:</p>
 <pre class="prettyprint source lang-js"><code>function speedtest() {
-  [true, false].forEach( manual => {
+  const props = PropertiesService.getScriptProperties();
+  [null, false, true].forEach( manual => {
     const max = 10;
     const arr = Array.from(Array(max).keys());
     const store = create('script', {manual});  // just save to local
@@ -174,10 +176,15 @@ store.persist();
     
     arr.map(item => (max - item).toString())
       .forEach( (num, idx) => {
-        store.set(num, {idx, a: num, date: new Date()});
+        const item = {idx, a: num, date: new Date()};
+        if (manual == null) 
+            props.setProperty(num, JSON.stringify(item));
+        else
+            store.set(num, item, skipCache=true);
       });
     
-    store.persist();  // now save
+    if (manual) 
+      store.persist();  // now save
 
     const end = new Date().getTime();
     Logger.log(manual + ': ' + ((end - start) / 1000) + ' seconds');
@@ -186,16 +193,22 @@ store.persist();
 </code></pre>
 <p>Result:</p>
 <pre class="prettyprint source"><code>For max = 10:
-    manually: 0.256 seconds
-    auto: 2.661 seconds
+    null: 1.049 seconds     # Calling PropertiesService directly 
+    false: 1.041 seconds    # In auto mode (persisting during loop)
+    true: 0.068 seconds     # In manual mode (persisting after loop)
+
 For max = 100:
-    manually: 0.313 seconds
-    auto: 19.855 seconds
+    null: 9.269 seconds
+    false: 6.476 seconds
+    true: 0.072 seconds
+
 For max = 1000:
-    manually: 0.804 seconds
-    auto: &lt;too slow to bother to wait>
+    null: 68.854 seconds
+    false: 68.777 seconds
+    true: 0.139 seconds
 </code></pre>
-<p>Very substantial savings.</p>
+<p>Note that <code>skipCache</code> was set to <code>true</code> in calls to <code>set</code> in order to present a more reliable metric of comparison.</p>
+<p>Conclusion: There could be substantial performance benefit to using this library in manual mode.</p>
     </article>
   </section>
 

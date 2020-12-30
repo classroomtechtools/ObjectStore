@@ -2,6 +2,21 @@ function ObjectStoreTests_() {
   const {describe, it, assert} = Import.UnitTesting;
   const {Store} = Import.ObjectStore;
 
+  describe("load from previous execution", function () {
+    it("calling .load brings in previous property store", function () {
+      const store = create('script');
+      const expected = ['key1', 'key2', 'key3'];
+      expected.forEach(key => store.set(key, key));
+      store.map = new Map();  // reset
+      store.load();
+      assert.arrayEquals({
+        expected,
+        actual: [...store.map.keys()],
+        comment: 'the map should have the keys after load'
+      });
+    });
+  });
+
   describe("consistency of arguments passed", function () {
     it("throws an error if key is not a string for .set", function () {
       const store = create('script');

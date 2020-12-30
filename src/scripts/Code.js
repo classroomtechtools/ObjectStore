@@ -10,9 +10,6 @@ function create (guard='script', config) {
   return new Store(guard, config);
 }
 
-/**
- * Used internally to get the class object
- */
 function import_ () {
   const {Store} = Import.ObjectStore;
   return Store;

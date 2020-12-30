@@ -73,7 +73,7 @@
 
     
 
-    <h3>Classes</h3><ul><li id="Store-nav"><a href="Store.html">Store</a><ul class='methods'><li data-type="method" id="Store-get-nav"><a href="Store.html#get">get</a></li><li data-type="method" id="Store-getAll-nav"><a href="Store.html#getAll">getAll</a></li><li data-type="method" id="Store-getKeys-nav"><a href="Store.html#getKeys">getKeys</a></li><li data-type="method" id="Store-persist-nav"><a href="Store.html#persist">persist</a></li><li data-type="method" id="Store-remove-nav"><a href="Store.html#remove">remove</a></li><li data-type="method" id="Store-removeAll-nav"><a href="Store.html#removeAll">removeAll</a></li><li data-type="method" id="Store-set-nav"><a href="Store.html#set">set</a></li><li data-type="method" id="Store-setProperties-nav"><a href="Store.html#setProperties">setProperties</a></li></ul></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#create">create</a></li><li><a href="global.html#import_">import_</a></li></ul>
+    <h3>Classes</h3><ul><li id="Store-nav"><a href="Store.html">Store</a><ul class='methods'><li data-type="method" id="Store-get-nav"><a href="Store.html#get">get</a></li><li data-type="method" id="Store-getAll-nav"><a href="Store.html#getAll">getAll</a></li><li data-type="method" id="Store-getKeys-nav"><a href="Store.html#getKeys">getKeys</a></li><li data-type="method" id="Store-load-nav"><a href="Store.html#load">load</a></li><li data-type="method" id="Store-persist-nav"><a href="Store.html#persist">persist</a></li><li data-type="method" id="Store-remove-nav"><a href="Store.html#remove">remove</a></li><li data-type="method" id="Store-removeAll-nav"><a href="Store.html#removeAll">removeAll</a></li><li data-type="method" id="Store-set-nav"><a href="Store.html#set">set</a></li><li data-type="method" id="Store-setProperties-nav"><a href="Store.html#setProperties">setProperties</a></li></ul></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#create">create</a></li></ul>
   </nav>
 
   <div id="main">
@@ -287,7 +287,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="modules_ObjectStore.js.html">modules/ObjectStore.js</a>, <a href="modules_ObjectStore.js.html#line76">line 76</a>
+          <a href="modules_ObjectStore.js.html">modules/ObjectStore.js</a>, <a href="modules_ObjectStore.js.html#line85">line 85</a>
         </li>
       </ul>
     </dd>
@@ -323,6 +323,25 @@
 
 
 
+  <div class="example-container">
+    <a class="link-icon" href="#Store-examples">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h5 id="Store-examples">Example</h5>
+    
+
+  <pre class="prettyprint"><code>const store = ObjectStore.create('script');
+// load it at execution start time
+store.load();
+store.set('key1', 'key1');
+store.set('key2', 'key2');
+store.persist();</code></pre>
+
+
+  </div>
+
 
       
     </div>
@@ -355,7 +374,7 @@
       </svg>
     </a>
     <h4 class="name" id="get">
-      <span class="type-signature"></span>get<span class="signature">()</span><span class="type-signature"></span>
+      <span class="type-signature"></span>get<span class="signature">(key, skipCache<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {any}</span>
     </h4>
   </span>
 
@@ -371,6 +390,122 @@
 
 
 
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+        <th>Attributes</th>
+      
+
+      
+        <th>Default</th>
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>key</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      String
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+
+            
+
+            
+          </td>
+        
+
+        
+          <td class="default">
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>The key of which to return</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>skipCache</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Boolean
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+          <td class="default">
+            
+              true
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>If true (the default), don't interact with the cache service for this call</p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
 
 
 
@@ -407,7 +542,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="modules_ObjectStore.js.html">modules/ObjectStore.js</a>, <a href="modules_ObjectStore.js.html#line147">line 147</a>
+          <a href="modules_ObjectStore.js.html">modules/ObjectStore.js</a>, <a href="modules_ObjectStore.js.html#line170">line 170</a>
         </li>
       </ul>
     </dd>
@@ -498,7 +633,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="modules_ObjectStore.js.html">modules/ObjectStore.js</a>, <a href="modules_ObjectStore.js.html#line185">line 185</a>
+          <a href="modules_ObjectStore.js.html">modules/ObjectStore.js</a>, <a href="modules_ObjectStore.js.html#line210">line 210</a>
         </li>
       </ul>
     </dd>
@@ -589,7 +724,98 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="modules_ObjectStore.js.html">modules/ObjectStore.js</a>, <a href="modules_ObjectStore.js.html#line177">line 177</a>
+          <a href="modules_ObjectStore.js.html">modules/ObjectStore.js</a>, <a href="modules_ObjectStore.js.html#line202">line 202</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#load">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="load">
+      <span class="type-signature"></span>load<span class="signature">()</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Download from the PropertyStore and store locally</p>
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="modules_ObjectStore.js.html">modules/ObjectStore.js</a>, <a href="modules_ObjectStore.js.html#line125">line 125</a>
         </li>
       </ul>
     </dd>
@@ -628,7 +854,7 @@
       </svg>
     </a>
     <h4 class="name" id="persist">
-      <span class="type-signature"></span>persist<span class="signature">(propsOnly<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span>
+      <span class="type-signature"></span>persist<span class="signature">(skipCache<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span>
     </h4>
   </span>
 
@@ -674,7 +900,7 @@
     
       <tr>
         
-          <td class="name"><code>propsOnly</code></td>
+          <td class="name"><code>skipCache</code></td>
         
 
         <td class="type">
@@ -711,7 +937,7 @@
         
 
         <td class="description last">
-          <p>Only update the property store and skip the cache</p>
+          <p>If true (the default), don't interact with the cache service for this call</p>
           
         </td>
       </tr>
@@ -755,7 +981,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="modules_ObjectStore.js.html">modules/ObjectStore.js</a>, <a href="modules_ObjectStore.js.html#line135">line 135</a>
+          <a href="modules_ObjectStore.js.html">modules/ObjectStore.js</a>, <a href="modules_ObjectStore.js.html#line155">line 155</a>
         </li>
       </ul>
     </dd>
@@ -909,7 +1135,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="modules_ObjectStore.js.html">modules/ObjectStore.js</a>, <a href="modules_ObjectStore.js.html#line219">line 219</a>
+          <a href="modules_ObjectStore.js.html">modules/ObjectStore.js</a>, <a href="modules_ObjectStore.js.html#line244">line 244</a>
         </li>
       </ul>
     </dd>
@@ -1106,7 +1332,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="modules_ObjectStore.js.html">modules/ObjectStore.js</a>, <a href="modules_ObjectStore.js.html#line230">line 230</a>
+          <a href="modules_ObjectStore.js.html">modules/ObjectStore.js</a>, <a href="modules_ObjectStore.js.html#line255">line 255</a>
         </li>
       </ul>
     </dd>
@@ -1145,7 +1371,7 @@
       </svg>
     </a>
     <h4 class="name" id="set">
-      <span class="type-signature"></span>set<span class="signature">(key, value)</span><span class="type-signature"></span>
+      <span class="type-signature"></span>set<span class="signature">(key, value, skipCache<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span>
     </h4>
   </span>
 
@@ -1176,7 +1402,11 @@
       <th>Type</th>
 
       
+        <th>Attributes</th>
+      
 
+      
+        <th>Default</th>
       
 
       <th class="last">Description</th>
@@ -1204,7 +1434,19 @@
         </td>
 
         
+          <td class="attributes">
+            
 
+            
+
+            
+          </td>
+        
+
+        
+          <td class="default">
+            
+          </td>
         
 
         <td class="description last">
@@ -1233,11 +1475,68 @@
         </td>
 
         
+          <td class="attributes">
+            
 
+            
+
+            
+          </td>
+        
+
+        
+          <td class="default">
+            
+          </td>
         
 
         <td class="description last">
           <p>The data to be stored at <code>key</code>.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>skipCache</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Boolean
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+          <td class="default">
+            
+              true
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>If true (the default), don't interact with the cache service for this call</p>
           
         </td>
       </tr>
@@ -1281,7 +1580,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="modules_ObjectStore.js.html">modules/ObjectStore.js</a>, <a href="modules_ObjectStore.js.html#line120">line 120</a>
+          <a href="modules_ObjectStore.js.html">modules/ObjectStore.js</a>, <a href="modules_ObjectStore.js.html#line140">line 140</a>
         </li>
       </ul>
     </dd>
@@ -1506,13 +1805,13 @@
         
           <td class="default">
             
-              false
+              true
             
           </td>
         
 
         <td class="description last">
-          <p>set to true to not place into cache</p>
+          <p>If true (the default), don't interact with the cache service for this call</p>
           
         </td>
       </tr>
@@ -1556,7 +1855,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="modules_ObjectStore.js.html">modules/ObjectStore.js</a>, <a href="modules_ObjectStore.js.html#line199">line 199</a>
+          <a href="modules_ObjectStore.js.html">modules/ObjectStore.js</a>, <a href="modules_ObjectStore.js.html#line224">line 224</a>
         </li>
       </ul>
     </dd>

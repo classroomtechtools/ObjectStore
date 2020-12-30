@@ -75,7 +75,7 @@
 
     
 
-    <h3>Classes</h3><ul><li id="Store-nav"><a href="Store.html">Store</a><ul class='methods'><li data-type="method" id="Store-get-nav"><a href="Store.html#get">get</a></li><li data-type="method" id="Store-getAll-nav"><a href="Store.html#getAll">getAll</a></li><li data-type="method" id="Store-getKeys-nav"><a href="Store.html#getKeys">getKeys</a></li><li data-type="method" id="Store-persist-nav"><a href="Store.html#persist">persist</a></li><li data-type="method" id="Store-remove-nav"><a href="Store.html#remove">remove</a></li><li data-type="method" id="Store-removeAll-nav"><a href="Store.html#removeAll">removeAll</a></li><li data-type="method" id="Store-set-nav"><a href="Store.html#set">set</a></li><li data-type="method" id="Store-setProperties-nav"><a href="Store.html#setProperties">setProperties</a></li></ul></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#create">create</a></li><li><a href="global.html#import_">import_</a></li></ul>
+    <h3>Classes</h3><ul><li id="Store-nav"><a href="Store.html">Store</a><ul class='methods'><li data-type="method" id="Store-get-nav"><a href="Store.html#get">get</a></li><li data-type="method" id="Store-getAll-nav"><a href="Store.html#getAll">getAll</a></li><li data-type="method" id="Store-getKeys-nav"><a href="Store.html#getKeys">getKeys</a></li><li data-type="method" id="Store-load-nav"><a href="Store.html#load">load</a></li><li data-type="method" id="Store-persist-nav"><a href="Store.html#persist">persist</a></li><li data-type="method" id="Store-remove-nav"><a href="Store.html#remove">remove</a></li><li data-type="method" id="Store-removeAll-nav"><a href="Store.html#removeAll">removeAll</a></li><li data-type="method" id="Store-set-nav"><a href="Store.html#set">set</a></li><li data-type="method" id="Store-setProperties-nav"><a href="Store.html#setProperties">setProperties</a></li></ul></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#create">create</a></li></ul>
   </nav>
 
   <div id="main">
@@ -102,9 +102,6 @@ function create (guard='script', config) {
   return new Store(guard, config);
 }
 
-/**
- * Used internally to get the class object
- */
 function import_ () {
   const {Store} = Import.ObjectStore;
   return Store;
