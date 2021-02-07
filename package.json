@@ -1,13 +1,13 @@
 {
-  "name": "object-store",
+  "name": "@classroomtechtools/object-store",
   "main": "src/modules/ObjectStore.js",
   "version": "1.0.0",
-  "repository": "https://github.com/classroomtechtools/objectStore",
-  "type": "module",
-  "license": {
-    "type": "MIT",
-    "url": "https://spdx.org/licenses/MIT.html"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/classroomtechtools/objectStore.git"
   },
+  "type": "module",
+  "license": "MIT",
   "ava": {
     "verbose": true
   },
@@ -27,7 +27,7 @@
     "clasp:logs": "clasp logs",
     "clasp:push": "clasp push",
     "clasp:tests": "clasp run tests",
-    "generate-docs": "node_modules/.bin/jsdoc --configure jsdoc-config.json --verbose --readme README.md"
+    "generate-docs": "jsdoc --configure jsdoc-config.json --verbose --readme README.md"
   },
   "devDependencies": {
     "@google/clasp": "^2.3.0",
@@ -51,5 +51,14 @@
     "@classroomtechtools/virtualgs": "file:../virtualization",
     "sinon": "^9.0.2",
     "sirv-cli": "^0.4.4"
+  },
+  "description": "A key/value store in AppsScripts that stores values and objects locally in memory, and writes to the `CacheService` and `PropertiesService` for reliable persistance.",
+  "bugs": {
+    "url": "https://github.com/classroomtechtools/objectStore/issues"
+  },
+  "homepage": "https://github.com/classroomtechtools/objectStore#readme",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
   }
 }
